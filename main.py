@@ -1,20 +1,9 @@
-import os
 import time
+from rich.live import Live
 
-from processes import system_stats, process_stats
+from processes import system_stats, process_stats, generate_table
 
-while True:
-    os.system('clear')
-
-    total_cpu_usage_percent, total_memory_usage_percent, cpu_temp = system_stats()
-    all_processes = process_stats()
-
-    print(f"CPU usage: {total_cpu_usage_percent:.3f}%")
-    print(f"Memory usage: {total_memory_usage_percent:.3f}% \n")
-    print(f"CPU temperature: {cpu_temp}°C \n\n")
-
-    print("\n pid \t name \t \t cpu \t memory")
-    for process in all_processes:
-        print(f"{process['pid']}\t{process['name'][:15]}\t\t{process['cpu_percent']}\t{process['memory_percent']:.3f}")
-    
-    time.sleep(1)
+with Live(generate_table(system_stats(), process_stats()), refresh_per_second=1, screen=True) as live:
+    while True:
+        time.sleep(1)
+        live.update(generate_table(system_stats(), process_stats()))
