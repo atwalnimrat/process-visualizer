@@ -1,29 +1,20 @@
-import psutil
+import os
+import time
 
-from processes import sort_processes
+from processes import system_stats, process_stats
 
-total_cpu_usage_percent = psutil.cpu_percent(interval=0.1)
-total_memory_usage_percent = psutil.virtual_memory().percent
+while True:
+    os.system('clear')
 
-cpu_temp = psutil.sensors_temperatures(fahrenheit=False)['thinkpad'][0]
+    total_cpu_usage_percent, total_memory_usage_percent, cpu_temp = system_stats()
+    all_processes = process_stats()
 
-all_processes = psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_percent'])
-#running_processes, idle_processes, sleeping_processes, 
-# stopped_processes, terminated_processes, other_processes = sort_processes(all_processes)
+    print(f"CPU usage: {total_cpu_usage_percent:.3f}%")
+    print(f"Memory usage: {total_memory_usage_percent:.3f}% \n")
+    print(f"CPU temperature: {cpu_temp}°C \n\n")
 
-
-#print(running_processes[0].cpu_percent())
-#print(running_processes[0].memory_percent())
-
-
-print(" pid","name", "\t cpu\t", "\tmemory")
-for process in all_processes:
-    memory = process.info['memory_percent']
-    if memory > 0:
-        cpu = process.cpu_percent(interval=0.1)
-        if cpu > 0:
-            print(process.pid, process.name(), cpu, memory)
-
-print("\n\nCPU usage:", total_cpu_usage_percent, "%")
-print("Memory usage:", total_memory_usage_percent, "%")
-print("CPU temperature:", cpu_temp.current, "C")
+    print("\n pid \t name \t \t cpu \t memory")
+    for process in all_processes:
+        print(f"{process['pid']}\t{process['name'][:15]}\t\t{process['cpu_percent']}\t{process['memory_percent']:.3f}")
+    
+    time.sleep(1)

@@ -1,21 +1,17 @@
-def sort_processes(all_processes):
+import psutil
 
-    running_processes, idle_processes, sleeping_processes, stopped_processes, terminated_processes, other_processes = [], [], [], [], [], []
-    
-    for item in all_processes:
-        if item.status() == 'running':
-            running_processes.append(item)
-        elif item.status() == 'idle':
-            idle_processes.append(item)
-        elif item.status() == 'sleeping':
-            sleeping_processes.append(item)
-        elif item.status() == 'stopped':
-            stopped_processes.append(item)
-        elif item.status() in ['terminated', 'dead']:
-            terminated_processes.append((item.pid, item.name()))
-        else:
-            other_processes.append(item)
+def system_stats():
+    cpu = psutil.cpu_percent(interval=0.1)
+    memory = psutil.virtual_memory().percent
+    cpu_temp = psutil.sensors_temperatures(fahrenheit=False)['thinkpad'][0].current
+    return [cpu, memory, cpu_temp]
 
-    return [running_processes, idle_processes, sleeping_processes, stopped_processes, terminated_processes, other_processes]
-
-            
+def process_stats():
+    processes = []
+    for pro in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_percent']):
+        try:
+            processes.append(pro.info)
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
+        processes.sort(key=lambda p: p['cpu_percent'], reverse=True)
+    return processes[:10]
