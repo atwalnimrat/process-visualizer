@@ -10,33 +10,49 @@ class ProcessVisualizer(QWidget):
         super().__init__()
 
         self.setWindowTitle("Process Visualizer - Prototype")
-        self.resize(800, 500)
+        self.resize(800, 1000)
 
         # Layouts
         layout = QVBoxLayout()
-        stats_layout = QHBoxLayout()
+        stats_cpu_layout = QHBoxLayout()
+        stats_memory_layout = QHBoxLayout()
 
         # Gauges (CPU, Memory, Temp)
         self.cpu_label = QLabel("CPU: 0%")
         self.mem_label = QLabel("Memory: 0%")
         self.temp_label = QLabel("Temp: 0°C")
+        self.cores_label = QLabel("Cores: 0%")
 
         for lbl in (self.cpu_label, self.mem_label, self.temp_label):
             lbl.setStyleSheet("font-size: 18px; padding: 8px;")
 
-        stats_layout.addWidget(self.cpu_label)
-        stats_layout.addWidget(self.mem_label)
-        stats_layout.addWidget(self.temp_label)
+        # CPU stats
+        stats_cpu_layout.addWidget(self.cpu_label)
+        stats_cpu_layout.addWidget(self.cores_label)
 
-        # Realtime Graph
-        self.plot = pg.PlotWidget(title="CPU Usage Over Time")
-        self.plot.showGrid(x=True, y=True)
-        self.data_x = list(range(60))
-        self.data_y = [0]*60
-        self.curve = self.plot.plot(self.data_x, self.data_y, pen=pg.mkPen(width=2))
+        # Realtime CPU Graph
+        self.cpu_plot = pg.PlotWidget(title="CPU Usage Over Time")
+        self.cpu_plot.showGrid(x=True, y=True)
+        self.data_cpu_x = list(range(60))
+        self.data_cpu_y = [0]*60
+        self.cpu_curve = self.cpu_plot.plot(self.data_cpu_x, self.data_cpu_y, pen=pg.mkPen(width=2, color='r'))
 
-        layout.addLayout(stats_layout)
-        layout.addWidget(self.plot)
+        layout.addLayout(stats_cpu_layout)
+        layout.addWidget(self.cpu_plot)
+
+        # Memory stats
+        stats_memory_layout.addWidget(self.mem_label)
+        stats_memory_layout.addWidget(self.temp_label)
+
+        # Realtime Memory Graph
+        self.memory_plot = pg.PlotWidget(title="Memory Usage Over Time")
+        self.memory_plot.showGrid(x=True, y=True)
+        self.data_memory_x = list(range(60))
+        self.data_memory_y = [0]*60
+        self.memory_curve = self.memory_plot.plot(self.data_memory_x, self.data_memory_y, pen=pg.mkPen(width=2, color='g'))
+
+        layout.addLayout(stats_memory_layout)
+        layout.addWidget(self.memory_plot)
 
         self.setLayout(layout)
 
@@ -47,11 +63,16 @@ class ProcessVisualizer(QWidget):
 
     def update_data(self):
             cpu, cores, memory, temp = system_stats()
+            strcores = "%; ".join(map(str, cores))
 
             self.cpu_label.setText(f"CPU: {cpu:.1f}%")
             self.mem_label.setText(f"Memory: {memory:.1f}%")
             self.temp_label.setText(f"Temp: {temp:.1f}°C")
+            self.cores_label.setText(f"Cores: {strcores}%")
 
-            # Shift data for the chart
-            self.data_y = self.data_y[1:] + [cpu]
-            self.curve.setData(self.data_x, self.data_y)
+            # Shift data for the charts
+            self.data_cpu_y = self.data_cpu_y[1:] + [cpu]
+            self.cpu_curve.setData(self.data_cpu_x, self.data_cpu_y)
+
+            self.data_memory_y = self.data_memory_y[1:] + [memory]
+            self.memory_curve.setData(self.data_memory_x, self.data_memory_y)
