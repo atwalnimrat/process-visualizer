@@ -10,12 +10,13 @@ class ProcessVisualizer(QWidget):
         super().__init__()
 
         self.setWindowTitle("Process Visualizer - Prototype")
-        self.resize(800, 1000)
+        self.resize(800, 1500)
 
         # Layouts
         layout = QVBoxLayout()
         stats_cpu_layout = QHBoxLayout()
         stats_memory_layout = QHBoxLayout()
+        stats_temp_layout = QHBoxLayout()
 
         # Gauges (CPU, Memory, Temp)
         self.cpu_label = QLabel("CPU: 0%")
@@ -42,7 +43,6 @@ class ProcessVisualizer(QWidget):
 
         # Memory stats
         stats_memory_layout.addWidget(self.mem_label)
-        stats_memory_layout.addWidget(self.temp_label)
 
         # Realtime Memory Graph
         self.memory_plot = pg.PlotWidget(title="Memory Usage Over Time")
@@ -53,6 +53,19 @@ class ProcessVisualizer(QWidget):
 
         layout.addLayout(stats_memory_layout)
         layout.addWidget(self.memory_plot)
+
+        # Temp stats
+        stats_temp_layout.addWidget(self.temp_label)
+
+        # Realtime Temp Graph
+        self.temp_plot = pg.PlotWidget(title="Temperature Over Time")
+        self.temp_plot.showGrid(x=True, y=True)
+        self.data_temp_x = list(range(60))
+        self.data_temp_y = [0]*60
+        self.temp_curve = self.temp_plot.plot(self.data_temp_x, self.data_temp_y, pen=pg.mkPen(width=2))
+
+        layout.addLayout(stats_temp_layout)
+        layout.addWidget(self.temp_plot)
 
         self.setLayout(layout)
 
@@ -76,3 +89,6 @@ class ProcessVisualizer(QWidget):
 
             self.data_memory_y = self.data_memory_y[1:] + [memory]
             self.memory_curve.setData(self.data_memory_x, self.data_memory_y)
+
+            self.data_temp_y = self.data_temp_y[1:] + [temp]
+            self.temp_curve.setData(self.data_temp_x, self.data_temp_y)        
