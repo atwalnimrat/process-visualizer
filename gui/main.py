@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QLabel
+from PyQt5.QtCore import QTimer
 
 import sys
 
