@@ -3,7 +3,7 @@ from PyQt5.QtCore import QTimer
 
 import pyqtgraph as pg
 
-from cli.processes import system_stats, process_stats
+from cli.processes import system_stats
 
 class StatsVisualizer(QWidget):
     def __init__(self):
@@ -12,7 +12,7 @@ class StatsVisualizer(QWidget):
         self.setWindowTitle("System Stats Visualizer")
         self.resize(1000, 1500)
 
-        self.time = 60
+        self.time = 60      #over a minute
 
         # Layouts
         layout = QVBoxLayout()
