@@ -5,12 +5,14 @@ import pyqtgraph as pg
 
 from cli.processes import system_stats, process_stats
 
-class ProcessVisualizer(QWidget):
+class StatsVisualizer(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Process Visualizer - Prototype")
-        self.resize(800, 1500)
+        self.setWindowTitle("System Stats Visualizer")
+        self.resize(1000, 1500)
+
+        self.time = 60
 
         # Layouts
         layout = QVBoxLayout()
@@ -24,8 +26,8 @@ class ProcessVisualizer(QWidget):
         self.temp_label = QLabel("Temp: 0°C")
         self.cores_label = QLabel("Cores: 0%")
 
-        for lbl in (self.cpu_label, self.mem_label, self.temp_label):
-            lbl.setStyleSheet("font-size: 18px; padding: 8px;")
+        for lbl in (self.cpu_label, self.mem_label, self.temp_label, self.cores_label):
+            lbl.setStyleSheet("font-size: 24px; padding: 5px;")
 
         # CPU stats
         stats_cpu_layout.addWidget(self.cpu_label)
@@ -34,8 +36,8 @@ class ProcessVisualizer(QWidget):
         # Realtime CPU Graph
         self.cpu_plot = pg.PlotWidget(title="CPU Usage Over Time")
         self.cpu_plot.showGrid(x=True, y=True)
-        self.data_cpu_x = list(range(60))
-        self.data_cpu_y = [0]*60
+        self.data_cpu_x = list(range(self.time))
+        self.data_cpu_y = [0]*self.time
         self.cpu_curve = self.cpu_plot.plot(self.data_cpu_x, self.data_cpu_y, pen=pg.mkPen(width=2, color='r'))
 
         layout.addLayout(stats_cpu_layout)
@@ -47,8 +49,8 @@ class ProcessVisualizer(QWidget):
         # Realtime Memory Graph
         self.memory_plot = pg.PlotWidget(title="Memory Usage Over Time")
         self.memory_plot.showGrid(x=True, y=True)
-        self.data_memory_x = list(range(60))
-        self.data_memory_y = [0]*60
+        self.data_memory_x = list(range(self.time))
+        self.data_memory_y = [0]*self.time
         self.memory_curve = self.memory_plot.plot(self.data_memory_x, self.data_memory_y, pen=pg.mkPen(width=2, color='g'))
 
         layout.addLayout(stats_memory_layout)
@@ -60,8 +62,8 @@ class ProcessVisualizer(QWidget):
         # Realtime Temp Graph
         self.temp_plot = pg.PlotWidget(title="Temperature Over Time")
         self.temp_plot.showGrid(x=True, y=True)
-        self.data_temp_x = list(range(60))
-        self.data_temp_y = [0]*60
+        self.data_temp_x = list(range(self.time))
+        self.data_temp_y = [0]*self.time
         self.temp_curve = self.temp_plot.plot(self.data_temp_x, self.data_temp_y, pen=pg.mkPen(width=2))
 
         layout.addLayout(stats_temp_layout)
@@ -76,12 +78,12 @@ class ProcessVisualizer(QWidget):
 
     def update_data(self):
             cpu, cores, memory, temp = system_stats()
-            strcores = "%; ".join(map(str, cores))
+            strcores = "% | ".join(map(str, cores))
 
-            self.cpu_label.setText(f"CPU: {cpu:.1f}%")
-            self.mem_label.setText(f"Memory: {memory:.1f}%")
-            self.temp_label.setText(f"Temp: {temp:.1f}°C")
-            self.cores_label.setText(f"Cores: {strcores}%")
+            self.cpu_label.setText(f"<b><u>CPU:</u></b> {cpu:.1f}%")
+            self.mem_label.setText(f"<b><u>Memory:</u></b> {memory:.1f}%")
+            self.temp_label.setText(f"<b><u>Temp:</u></b> {temp:.1f}°C")
+            self.cores_label.setText(f"<b><u>Cores:</u></b> {strcores}%")
 
             # Shift data for the charts
             self.data_cpu_y = self.data_cpu_y[1:] + [cpu]
