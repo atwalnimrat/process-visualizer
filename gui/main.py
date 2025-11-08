@@ -7,5 +7,7 @@ from gui.ssv import StatsVisualizer
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = StatsVisualizer()
-    window.show()
+    window.hide()
+    if input() == "nimrat":         #temporary
+        window.show()
     sys.exit(app.exec_())
