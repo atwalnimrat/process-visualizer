@@ -15,4 +15,4 @@ def process_stats():
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
         processes.sort(key=lambda p: p['cpu_percent'], reverse=True)
-    return processes[:15]
+    return processes[:20]

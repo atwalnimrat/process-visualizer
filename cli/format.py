@@ -3,7 +3,6 @@ from rich.table import Table
 # For terminal output
 def generate_table(sys_stats, processes):
     cpu, cores, memory, cpu_temp = sys_stats
-    print(cores)
     strcores = "%|".join(map(str, cores)) + "%"
     table = Table(title=f"System Monitor \nCPU: {cpu:.2f}% | Memory: {memory:.2f}% | Temp: {cpu_temp}°C \nCPU Cores: {strcores}")
 
