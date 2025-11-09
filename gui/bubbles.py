@@ -1,9 +1,10 @@
 from PyQt5.QtWidgets import QApplication, QWidget
-from PyQt5.QtCore import Qt, QTimer, QPointF
-from PyQt5.QtGui import QPainter, QColor
+from PyQt5.QtCore import Qt, QTimer, QPointF, QRectF
+from PyQt5.QtGui import QPainter, QColor, QFont
 
 import sys
 import random
+import hashlib
 
 from cli.processes import process_stats
 
@@ -16,6 +17,14 @@ class Bubble:
         self.dx = random.choice([-2, 2])
         self.dy = random.choice([-2, 2])
         self.radius = max(10, cpu * 3)           # scale size by CPU%
+        self.color = self.get_color_from_name(name)
+
+    def get_color_from_name(self, name):
+        hash_val = int(hashlib.md5(name.encode()).hexdigest(), 16)
+        r = (hash_val & 0xFF0000) >> 16
+        g = (hash_val & 0x00FF00) >> 8
+        b = (hash_val & 0x0000FF)
+        return QColor(r, g, b, 180)
 
 class BubbleOverlay(QWidget):
     def __init__(self):
@@ -79,11 +88,20 @@ class BubbleOverlay(QWidget):
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
-        for b in self.bubbles.values():
-            color = QColor(random.randint(100,255), random.randint(100,255), random.randint(100,255), 150)
-            painter.setBrush(color)
+        font = QFont("Arial", 10)
+        painter.setFont(font)
+        
+        for bubble in self.bubbles.values():
+            # Draw bubble
+            painter.setBrush(bubble.color)
             painter.setPen(Qt.NoPen)
-            painter.drawEllipse(QPointF(b.x, b.y), b.radius, b.radius)
+            painter.drawEllipse(QPointF(bubble.x, bubble.y), bubble.radius, bubble.radius)
+
+            # Bubble name
+            painter.setPen(Qt.white)            
+            text_rect_y = bubble.y - (font.pointSize() / 2)
+            rect = QRectF(bubble.x - bubble.radius, text_rect_y, bubble.radius * 2, bubble.radius)
+            painter.drawText(rect, Qt.AlignCenter, bubble.name[:12])
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
