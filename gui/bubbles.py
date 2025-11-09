@@ -16,8 +16,9 @@ class Bubble:
         self.y = y if y is not None else random.randint(50, 450)
         self.dx = random.choice([-2, 2])
         self.dy = random.choice([-2, 2])
-        self.radius = max(10, cpu * 3)           # scale size by CPU%
+        self.radius = min(max(10, self.cpu * 3), 220)          # scale size by CPU%
         self.color = self.get_color_from_name(name)
+        self.font = QFont("Arial")
 
     def get_color_from_name(self, name):
         hash_val = int(hashlib.md5(name.encode()).hexdigest(), 16)
@@ -102,11 +103,9 @@ class BubbleOverlay(QWidget):
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
-        
-        font = QFont("Arial")
-        painter.setFont(font)
 
         for bubble in self.bubbles.values():
+            painter.setFont(bubble.font)
             # Draw bubble
             painter.setBrush(bubble.color)
             painter.setPen(Qt.NoPen)
@@ -121,7 +120,7 @@ class BubbleOverlay(QWidget):
             text_height = fm.height()
             
             # Text font
-            font.setPointSizeF(max(6, bubble.radius * 0.4))
+            bubble.font.setPointSizeF(max(10, bubble.radius * 0.15))
 
             x = bubble.x - text_width / 2
             y = bubble.y + text_height / 4  
