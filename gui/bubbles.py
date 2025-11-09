@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QWidget
-from PyQt5.QtCore import Qt, QTimer, QPointF, QRectF
+from PyQt5.QtCore import Qt, QTimer, QPointF
 from PyQt5.QtGui import QPainter, QColor, QFont
 
 import sys
@@ -88,9 +88,10 @@ class BubbleOverlay(QWidget):
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
-        font = QFont("Arial", 10)
-        painter.setFont(font)
         
+        font = QFont("Arial")
+        painter.setFont(font)
+
         for bubble in self.bubbles.values():
             # Draw bubble
             painter.setBrush(bubble.color)
@@ -98,10 +99,21 @@ class BubbleOverlay(QWidget):
             painter.drawEllipse(QPointF(bubble.x, bubble.y), bubble.radius, bubble.radius)
 
             # Bubble name
-            painter.setPen(Qt.white)            
-            text_rect_y = bubble.y - (font.pointSize() / 2)
-            rect = QRectF(bubble.x - bubble.radius, text_rect_y, bubble.radius * 2, bubble.radius)
-            painter.drawText(rect, Qt.AlignCenter, bubble.name[:12])
+            painter.setPen(Qt.white)
+
+            text = bubble.name[:15]
+            fm = painter.fontMetrics()
+            text_width = fm.horizontalAdvance(text)
+            text_height = fm.height()
+            
+            # Text font
+            font.setPointSizeF(max(6, bubble.radius * 0.4))
+
+            x = bubble.x - text_width / 2
+            y = bubble.y + text_height / 4  
+
+            painter.drawText(QPointF(x, y), text)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
