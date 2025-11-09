@@ -8,11 +8,11 @@ import random
 from cli.processes import process_stats
 
 class Bubble:
-    def __init__(self, name, cpu):
+    def __init__(self, name, cpu, x=None, y=None):
         self.name = name
         self.cpu = cpu
-        self.x = random.randint(50, 450)
-        self.y = random.randint(50, 450)
+        self.x = x if x is not None else random.randint(50, 450)
+        self.y = y if y is not None else random.randint(50, 450)
         self.dx = random.choice([-2, 2])
         self.dy = random.choice([-2, 2])
         self.radius = max(10, cpu * 3)           # scale size by CPU%
@@ -29,7 +29,7 @@ class BubbleOverlay(QWidget):
         self.resize(800, 500)
         self.move_to_bottom_right()
         
-        self.bubbles = []
+        self.bubbles = {}
         self.update_processes()
 
         # Refresh processes 
@@ -50,11 +50,24 @@ class BubbleOverlay(QWidget):
 
     def update_processes(self):
         procs = process_stats()
+        current_names = self.bubbles.keys()
         seen = set()
-        self.bubbles = [Bubble(p['name'], p['cpu_percent'])for p in procs if not (p['name'] in seen or seen.add(p['name']))][:5]      # top 5
+        bubbles_now = [Bubble(p['name'], p['cpu_percent'])for p in procs if not (p['name'] in seen or seen.add(p['name']))][:5]      # top 5
+        for b in bubbles_now:
+            if b.name in current_names:
+                bubble = self.bubbles[b.name]
+                bubble.cpu = b.cpu
+                bubble.radius = max(10, b.cpu * 3)
+            else:
+                self.bubbles[b.name] = b
+        
+        # Remove bubbles not in top 5
+        for name in list(current_names):
+            if name not in [x.name for x in bubbles_now]:
+                del self.bubbles[name]
 
     def animate(self):
-        for b in self.bubbles:
+        for b in self.bubbles.values():
             b.x += b.dx
             b.y += b.dy
             if b.x - b.radius < 0 or b.x + b.radius > self.width():
@@ -66,7 +79,7 @@ class BubbleOverlay(QWidget):
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
-        for b in self.bubbles:
+        for b in self.bubbles.values():
             color = QColor(random.randint(100,255), random.randint(100,255), random.randint(100,255), 150)
             painter.setBrush(color)
             painter.setPen(Qt.NoPen)
