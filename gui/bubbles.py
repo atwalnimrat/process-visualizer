@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
 from PyQt5.QtCore import Qt, QTimer, QPointF
 from PyQt5.QtGui import QPainter, QColor, QFont
 
@@ -47,6 +47,38 @@ class BubbleOverlay(QWidget):
         self.anim_timer = QTimer(self)
         self.anim_timer.timeout.connect(self.animate)
         self.anim_timer.start(16)       # 16ms (~60fps)
+
+        # Stats Window
+        self.stats_window = None
+
+        self.stats_button = QPushButton("Stats", self)
+        self.stats_button.setFixedSize(60, 30)
+        self.stats_button.move(10, 10)          # top-left corner
+        self.stats_button.clicked.connect(self.toggle_stats)
+
+        self.stats_button.setStyleSheet("""
+            QPushButton {
+                background-color: rgba(255, 255, 255, 80);
+                border: none;
+                border-radius: 5px;
+                color: black;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: rgba(255, 255, 255, 150);
+            }
+        """)
+
+    def set_stats_window(self, stats_window):
+        self.stats_window = stats_window
+
+    def toggle_stats(self):
+        if self.stats_window is not None:
+            if self.stats_window.isVisible():
+                self.stats_window.hide()
+            else:
+                self.stats_window.show()
+                self.stats_window.raise_()
 
     def closeEvent(self, event):        
         event.ignore()      # hides
