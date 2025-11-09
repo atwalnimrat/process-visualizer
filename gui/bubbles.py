@@ -51,34 +51,26 @@ class BubbleOverlay(QWidget):
         # Stats Window
         self.stats_window = None
 
-        self.stats_button = QPushButton("Stats", self)
-        self.stats_button.setFixedSize(60, 30)
-        self.stats_button.move(10, 10)          # top-left corner
+        # Stats button
+        self.stats_button = QPushButton(" Stats ", self)
+        self.stats_button.setFixedSize(75, 30)
+        self.position_stats_button()         
         self.stats_button.clicked.connect(self.toggle_stats)
 
         self.stats_button.setStyleSheet("""
             QPushButton {
-                background-color: rgba(255, 255, 255, 80);
+                background-color: rgba(255, 255, 255, 50);
+                padding: 1px;
                 border: none;
                 border-radius: 5px;
-                color: black;
-                font-weight: bold;
+                color: white;
             }
             QPushButton:hover {
                 background-color: rgba(255, 255, 255, 150);
+                color: black;
+                font-weight: bold;
             }
         """)
-
-    def set_stats_window(self, stats_window):
-        self.stats_window = stats_window
-
-    def toggle_stats(self):
-        if self.stats_window is not None:
-            if self.stats_window.isVisible():
-                self.stats_window.hide()
-            else:
-                self.stats_window.show()
-                self.stats_window.raise_()
 
     def closeEvent(self, event):        
         event.ignore()      # hides
@@ -158,3 +150,20 @@ class BubbleOverlay(QWidget):
             y = bubble.y + text_height / 4  
 
             painter.drawText(QPointF(x, y), text)
+
+
+    def set_stats_window(self, stats_window):
+        self.stats_window = stats_window
+
+    def position_stats_button(self):        # top right corner
+        padding = 10
+        btn_width = self.stats_button.width()
+        self.stats_button.move(self.width() - btn_width - padding, padding)
+
+    def toggle_stats(self):
+        if self.stats_window is not None:
+            if self.stats_window.isVisible():
+                self.stats_window.hide()
+            else:
+                self.stats_window.show()
+                self.stats_window.raise_()
