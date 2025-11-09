@@ -85,17 +85,17 @@ Process Visualizer will now automatically launch at login.
 
 ## Troubleshooting
 
-* **ModuleNotFoundError: No module named 'gui'**
+* **ModuleNotFoundError: No module named 'gui'** <br>
   Ensure the `Exec` command runs from the project root directory using `cd /path/to/project`.
 
-* **App doesn’t start at login**
+* **App doesn’t start at login** <br>
   GNOME may launch apps too early; add a delay in the `.desktop` file:
 
 ```ini
 Exec=bash -c "sleep 10 && cd /path/to/project && /usr/bin/python3 -m gui.main"
 ```
 
-* **Terminal window flashes or appears briefly**
+* **Terminal window flashes or appears briefly** <br>
   This is normal when running a Python script directly. Packaging into an executable can remove the terminal window.
 
 ---
