@@ -1,13 +1,13 @@
 ## Process Visualizer
 
-A frameless, transparent GUI application to visualize processes in real-time, built with Python. It features a system stats (CPU usage, memory usage, CPU temperature) visualizer which is toggable using a button. Designed for all desktop environments.
+A frameless GUI application to visualize processes as bubbles bouncing around on your screen. It is built using Python and features a system stats (CPU usage, memory usage, CPU temperature) visualizer which is toggable using a button. Designed for all desktop environments.
 
 ---
 
 ## Features
 
-* Frameless, transparent window interface for unobtrusive visualization
-* Real-time process monitoring
+* Frameless, always on top, transparent window interface for unobtrusive visualization
+* Real-time process monitoring with fun bubbles
 * Real-time CPU usage, CPU temperature and memory usage graphs
 * Lightweight and minimal UI
 * Can be set to auto-start on login in Fedora GNOME
