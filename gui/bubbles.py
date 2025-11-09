@@ -68,7 +68,7 @@ class BubbleOverlay(QWidget):
             if b.name in current_names:
                 bubble = self.bubbles[b.name]
                 bubble.cpu = b.cpu
-                bubble.radius = max(10, b.cpu * 3)
+                bubble.radius = min(max(10, b.cpu * 3), 220)
             else:
                 self.bubbles[b.name] = b
         
