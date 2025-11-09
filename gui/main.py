@@ -11,6 +11,7 @@ if __name__ == "__main__":
     overlay = BubbleOverlay()
     stats_window = StatsVisualizer()
 
+    overlay.setWindowTitle("Process Visualizer")
     overlay.set_stats_window(stats_window)
 
     overlay.show()

@@ -29,7 +29,7 @@ class Bubble:
 class BubbleOverlay(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.resize(800, 500)
         self.move_to_bottom_right()
@@ -72,9 +72,27 @@ class BubbleOverlay(QWidget):
             }
         """)
 
+        # Minimize button
+        self.minimize_button = QPushButton("-", self)
+        self.minimize_button.setFixedSize(30, 30)
+        self.minimize_button.move(10, 10)
+        self.minimize_button.setStyleSheet("""
+            QPushButton {
+                background-color: rgba(255,255,255,0.3);
+                border: none;
+                font-size: 30px;
+                color: white;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: rgba(255,255,255,0.5);
+            }
+        """)
+        self.minimize_button.clicked.connect(self.showMinimized)
+
     def closeEvent(self, event):        
         event.ignore()      # hides
-        self.hide()
+        self.showMinimized()
 
     def move_to_bottom_right(self):
         screen = QApplication.primaryScreen().availableGeometry()
