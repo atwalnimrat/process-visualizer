@@ -1,6 +1,6 @@
 ## Process Visualizer
 
-A frameless GUI application to visualize processes as bubbles bouncing around on your screen. It is built using Python and features a system stats (CPU usage, memory usage, CPU temperature) visualizer which is toggable using a button. Designed for all desktop environments.
+A GUI application to visualize processes as bubbles bouncing around on your screen. It is built using Python and features a system stats (CPU usage, memory usage, CPU temperature) visualizer which is toggable using a button. Designed for all desktop environments.
 
 ---
 
