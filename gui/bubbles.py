@@ -60,6 +60,8 @@ class BubbleOverlay(QWidget):
     def update_processes(self):
         procs = process_stats()
         current_names = self.bubbles.keys()
+
+        # Update bubbles
         seen = set()
         bubbles_now = [Bubble(p['name'], p['cpu_percent'])for p in procs if not (p['name'] in seen or seen.add(p['name']))][:5]      # top 5
         for b in bubbles_now:
@@ -76,13 +78,25 @@ class BubbleOverlay(QWidget):
                 del self.bubbles[name]
 
     def animate(self):
-        for b in self.bubbles.values():
-            b.x += b.dx
-            b.y += b.dy
-            if b.x - b.radius < 0 or b.x + b.radius > self.width():
-                b.dx *= -1
-            if b.y - b.radius < 0 or b.y + b.radius > self.height():
-                b.dy *= -1
+        for bubble in self.bubbles.values():
+            bubble.x += bubble.dx
+            bubble.y += bubble.dy
+
+            # Bounce inside bounds
+            if bubble.x - bubble.radius < 0:
+                bubble.x = bubble.radius
+                bubble.dx *= -1
+            elif bubble.x + bubble.radius > self.width():
+                bubble.x = self.width() - bubble.radius
+                bubble.dx *= -1
+
+            if bubble.y - bubble.radius < 0:
+                bubble.y = bubble.radius
+                bubble.dy *= -1
+            elif bubble.y + bubble.radius > self.height():
+                bubble.y = self.height() - bubble.radius
+                bubble.dy *= -1
+
         self.update()
 
     def paintEvent(self, event):
