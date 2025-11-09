@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtCore import Qt, QTimer, QPointF
 from PyQt5.QtGui import QPainter, QColor, QFont
 
-import sys
 import random
 import hashlib
 
@@ -30,15 +29,12 @@ class Bubble:
 class BubbleOverlay(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowFlags(
-            Qt.FramelessWindowHint | 
-            Qt.WindowStaysOnTopHint | 
-            Qt.Tool
-        )
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.resize(800, 500)
         self.move_to_bottom_right()
-        
+
+        # Processes
         self.bubbles = {}
         self.update_processes()
 
@@ -51,6 +47,10 @@ class BubbleOverlay(QWidget):
         self.anim_timer = QTimer(self)
         self.anim_timer.timeout.connect(self.animate)
         self.anim_timer.start(16)       # 16ms (~60fps)
+
+    def closeEvent(self, event):        
+        event.ignore()      # hides
+        self.hide()
 
     def move_to_bottom_right(self):
         screen = QApplication.primaryScreen().availableGeometry()
@@ -126,10 +126,3 @@ class BubbleOverlay(QWidget):
             y = bubble.y + text_height / 4  
 
             painter.drawText(QPointF(x, y), text)
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    overlay = BubbleOverlay()
-    overlay.show()
-    sys.exit(app.exec())

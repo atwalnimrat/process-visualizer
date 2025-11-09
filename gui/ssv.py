@@ -76,6 +76,10 @@ class StatsVisualizer(QWidget):
         self.timer.timeout.connect(self.update_data)
         self.timer.start(1000)
 
+    def closeEvent(self, event):
+        event.ignore()          # hides 
+        self.hide()
+    
     def update_data(self):
             cpu, cores, memory, temp = system_stats()
             strcores = "% | ".join(map(str, cores))
