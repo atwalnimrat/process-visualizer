@@ -36,7 +36,7 @@ python -m gui.main
 ```
 
 Your frameless transparent window should appear.
-<br>
+<br><br>
 To view the cli prototype, run the following from the root directory:
 
 ```bash
