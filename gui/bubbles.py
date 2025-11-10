@@ -75,17 +75,20 @@ class BubbleOverlay(QWidget):
         # Minimize button
         self.minimize_button = QPushButton("-", self)
         self.minimize_button.setFixedSize(30, 30)
-        self.minimize_button.move(10, 10)
+        self.position_minimize_button()
         self.minimize_button.setStyleSheet("""
             QPushButton {
-                background-color: rgba(255,255,255,0.3);
+                background-color: rgba(255, 255, 255, 50);
                 border: none;
-                font-size: 30px;
+                font-size: 50px;
+                padding: 1px;
                 color: white;
                 border-radius: 5px;
             }
             QPushButton:hover {
-                background-color: rgba(255,255,255,0.5);
+                background-color: rgba(255, 255, 255, 150);
+                color: black;
+                font-weight: bold;
             }
         """)
         self.minimize_button.clicked.connect(self.showMinimized)
@@ -175,8 +178,14 @@ class BubbleOverlay(QWidget):
 
     def position_stats_button(self):        # top right corner
         padding = 10
+        margin = 35
         btn_width = self.stats_button.width()
-        self.stats_button.move(self.width() - btn_width - padding, padding)
+        self.stats_button.move(self.width() - btn_width - padding - margin, padding)
+
+    def position_minimize_button(self):     # top right corner
+        padding = 10
+        btn_width = self.minimize_button.width()
+        self.minimize_button.move(self.width() - btn_width, padding)
 
     def toggle_stats(self):
         if self.stats_window is not None:
