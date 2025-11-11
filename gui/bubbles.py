@@ -18,6 +18,7 @@ class Bubble:
         self.radius = min(max(10, self.cpu * 3), 220)          # scale size by CPU%
         self.color = self.get_color_from_name(name)
         self.font = QFont("Arial")
+        self.font_size = 10
 
     def get_color_from_name(self, name):
         hash_val = int(hashlib.md5(name.encode()).hexdigest(), 16)
@@ -165,7 +166,9 @@ class BubbleOverlay(QWidget):
             text_height = fm.height()
             
             # Text font
-            bubble.font.setPointSizeF(max(10, bubble.radius * 0.15))
+            if len(text) < (bubble.radius* 2):
+                bubble.font_size = max(bubble.font_size, bubble.radius * 0.1)
+            bubble.font.setPointSizeF(bubble.font_size)
 
             x = bubble.x - text_width / 2
             y = bubble.y + text_height / 4  
