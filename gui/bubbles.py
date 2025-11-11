@@ -167,7 +167,9 @@ class BubbleOverlay(QWidget):
             
             # Text font
             if len(text) < (bubble.radius* 2):
-                bubble.font_size = max(bubble.font_size, bubble.radius * 0.1)
+                bubble.font_size = max(10, bubble.radius * 0.1)
+            else:
+                bubble.font_size = min(10, bubble.radius * 0.1)
             bubble.font.setPointSizeF(bubble.font_size)
 
             x = bubble.x - text_width / 2
