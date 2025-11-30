@@ -1,6 +1,13 @@
 ## Process Visualizer
 
 A GUI application to visualize processes as bubbles bouncing around on your screen. It is built using Python and features a system stats (CPU usage, memory usage, CPU temperature) visualizer which is toggable using a button. Designed for all desktop environments.
+<br><br>
+<p align="center">
+  <img src="img/app-1.png" alt="App-Screenshot 1" width="45%" />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="img/app-2.png" alt="App-Screenshot 2" width="45%" />
+</p>
+
 
 ---
 
@@ -36,12 +43,22 @@ python -m gui.main
 ```
 
 Your frameless transparent window should appear.
-<br><br>
-To view the cli prototype, run the following from the root directory:
+<br>
+<p align="center">
+  <img src="img/run-1.png" alt="App-Screenshot 1" width="45%" />
+</p>
 
+To view the cli prototype, run the following from the root directory:
+<br>
 ```bash
 python -m cli.main
 ```
+
+A table retrieving the top processes should appear in the terminal.
+<br>
+<p align="center">
+  <img src="img/run-2.png" alt="App-Screenshot 1" width="45%" />
+</p>
 
 ---
 
