@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import QTimer
+from plyer import notification
 
 import pyqtgraph as pg
 
@@ -8,6 +9,7 @@ from cli.processes import system_stats
 class StatsVisualizer(QWidget):
     def __init__(self):
         super().__init__()
+        self._force_close = False
 
         self.setWindowTitle("System Stats Visualizer")
         self.resize(1000, 1500)
@@ -77,24 +79,33 @@ class StatsVisualizer(QWidget):
         self.timer.start(1000)
 
     def closeEvent(self, event):
-        event.ignore()          # hides 
-        self.hide()
+        if self._force_close:
+            event.accept()
+        else:
+            event.ignore()          
+            self.hide()
     
     def update_data(self):
-            cpu, cores, memory, temp = system_stats()
-            strcores = "% | ".join(map(str, cores))
+        cpu, cores, memory, temp = system_stats()
+        strcores = "% | ".join(map(str, cores))
 
-            self.cpu_label.setText(f"<b><u>CPU:</u></b> {cpu:.1f}%")
-            self.mem_label.setText(f"<b><u>Memory:</u></b> {memory:.1f}%")
-            self.temp_label.setText(f"<b><u>Temp:</u></b> {temp:.1f}°C")
-            self.cores_label.setText(f"<b><u>Cores:</u></b> {strcores}%")
+        # Check for notification
+        self.check_data(cpu, memory, temp)
 
-            # Shift data for the charts
-            self.data_cpu_y = self.data_cpu_y[1:] + [cpu]
-            self.cpu_curve.setData(self.data_cpu_x, self.data_cpu_y)
+        self.cpu_label.setText(f"<b><u>CPU:</u></b> {cpu:.1f}%")
+        self.mem_label.setText(f"<b><u>Memory:</u></b> {memory:.1f}%")
+        self.temp_label.setText(f"<b><u>Temp:</u></b> {temp:.1f}°C")
+        self.cores_label.setText(f"<b><u>Cores:</u></b> {strcores}%")
 
-            self.data_memory_y = self.data_memory_y[1:] + [memory]
-            self.memory_curve.setData(self.data_memory_x, self.data_memory_y)
+        # Shift data for the charts
+        self.data_cpu_y = self.data_cpu_y[1:] + [cpu]
+        self.cpu_curve.setData(self.data_cpu_x, self.data_cpu_y)
 
-            self.data_temp_y = self.data_temp_y[1:] + [temp]
-            self.temp_curve.setData(self.data_temp_x, self.data_temp_y)        
+        self.data_memory_y = self.data_memory_y[1:] + [memory]
+        self.memory_curve.setData(self.data_memory_x, self.data_memory_y)
+
+        self.data_temp_y = self.data_temp_y[1:] + [temp]
+        self.temp_curve.setData(self.data_temp_x, self.data_temp_y)     
+
+    def check_data(self, cpu, memory, temp):
+        pass
