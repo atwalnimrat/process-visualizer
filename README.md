@@ -16,6 +16,7 @@ A GUI application to visualize processes as bubbles bouncing around on your scre
 * Frameless, always on top, transparent window interface for unobtrusive visualization
 * Real-time process monitoring with fun bubbles
 * Real-time CPU usage, CPU temperature and memory usage graphs
+* System notifications for high CPU usage or temperature, and memory usage with anti-spam alerts
 * Lightweight and minimal UI
 * Can be set to auto-start on login in Fedora GNOME
 
