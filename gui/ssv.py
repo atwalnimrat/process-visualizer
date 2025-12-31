@@ -108,5 +108,39 @@ class StatsVisualizer(QWidget):
         self.temp_curve.setData(self.data_temp_x, self.data_temp_y)     
 
     def check_data(self, cpu, memory, temp):
-        pass
-    
+        # THRESHOLDS
+        CPU_USAGE_THRESHOLD = 80
+        MEMORY_USAGE_THRESHOLD = 80
+        CPU_TEMP_THRESHOLD = 100  
+
+        # Flags
+        alerts = {
+            "cpu": False,
+            "memory": False,
+            "temp": False,
+        }
+
+        def notify(title, message):
+            notification.notify(title=title, message=message, timeout=5)
+
+        # CPU check
+        if cpu > CPU_USAGE_THRESHOLD and not alerts["cpu"]:
+            notify("Warning ⚠️: High CPU Usage", f"CPU usage at {cpu:.1f}%")
+            alerts["cpu"] = True
+        elif cpu <= CPU_USAGE_THRESHOLD:
+            alerts["cpu"] = False
+
+        # Memory check
+        if memory > MEMORY_USAGE_THRESHOLD and not alerts["memory"]:
+            notify("Warning ⚠️: High Memory Usage", f"Memory usage at {memory:.1f}%")
+            alerts["memory"] = True
+        elif memory <= MEMORY_USAGE_THRESHOLD:
+            alerts["memory"] = False
+
+        # Temperature check
+        if temp > CPU_TEMP_THRESHOLD and not alerts["temp"]:
+            notify("Warning ⚠️: High CPU Temperature", f"CPU temp at {temp:.1f}°C")
+            alerts["temp"] = True
+        elif temp <= CPU_TEMP_THRESHOLD:
+            alerts["temp"] = False
+
