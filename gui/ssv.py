@@ -1,7 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import QTimer
 from plyer import notification
-
 import pyqtgraph as pg
 
 from cli.processes import system_stats

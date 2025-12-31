@@ -1,3 +1,4 @@
+plyer
 psutil
 PyQt5
 pyqtgraph
