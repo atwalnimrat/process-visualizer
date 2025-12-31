@@ -95,8 +95,7 @@ class BubbleOverlay(QWidget):
         self.minimize_button.clicked.connect(self.showMinimized)
 
     def closeEvent(self, event):        
-        event.ignore()      # hides
-        self.showMinimized()
+        event.accept()      #closes
 
     def move_to_bottom_right(self):
         screen = QApplication.primaryScreen().availableGeometry()
