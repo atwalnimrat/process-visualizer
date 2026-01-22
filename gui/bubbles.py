@@ -59,7 +59,8 @@ class BubbleOverlay(QWidget):
         # Animate bubbles
         self.anim_timer = QTimer(self)
         self.anim_timer.timeout.connect(self.animate)
-        self.anim_timer.start(20)       # 16ms (~60fps) change with resolution
+        # Change with resolution
+        self.anim_timer.start(20)       # 16ms (~60fps) 
 
         # Stats Window
         self.stats_window = None
@@ -116,13 +117,13 @@ class BubbleOverlay(QWidget):
         y = screen.bottom() - self.height() - int(10*self.scale_h)
         self.move(x, y)
 
-    def update_processes(self):
+    def update_processes(self, max_bub = 5):
         procs = process_stats()
         current_names = self.bubbles.keys()
 
         # Update bubbles
         seen = set()
-        bubbles_now = [Bubble(self.dpi , self.scale_h*210, p['name'], p['cpu_percent'])for p in procs if not (p['name'] in seen or seen.add(p['name']))][:5]      # top 5
+        bubbles_now = [Bubble(self.dpi , self.scale_h*210, p['name'], p['cpu_percent'])for p in procs if not (p['name'] in seen or seen.add(p['name']))][:max_bub]      # top 
         for b in bubbles_now:
             if b.name in current_names:
                 bubble = self.bubbles[b.name]
@@ -131,7 +132,7 @@ class BubbleOverlay(QWidget):
             else:
                 self.bubbles[b.name] = b
         
-        # Remove bubbles not in top 5
+        # Remove bubbles not in top 
         for name in list(current_names):
             if name not in [x.name for x in bubbles_now]:
                 del self.bubbles[name]
