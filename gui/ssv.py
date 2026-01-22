@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QWidget,QApplication, QLabel, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import QTimer
 from plyer import notification
 import pyqtgraph as pg
@@ -6,12 +6,15 @@ import pyqtgraph as pg
 from cli.processes import system_stats
 
 class StatsVisualizer(QWidget):
-    def __init__(self):
+    def __init__(self, size, dpi_scale):
         super().__init__()
         self._force_close = False
 
         self.setWindowTitle("System Stats Visualizer")
-        self.resize(1000, 1500)
+
+        width = int(size.width() * 0.20)
+        height = int(size.height() * 0.80)
+        self.resize(width, height)
 
         self.time = 60      #over a minute
 
@@ -28,7 +31,7 @@ class StatsVisualizer(QWidget):
         self.cores_label = QLabel("Cores: 0%")
 
         for lbl in (self.cpu_label, self.mem_label, self.temp_label, self.cores_label):
-            lbl.setStyleSheet("font-size: 24px; padding: 5px;")
+            lbl.setStyleSheet(f"font-size: {24 * dpi_scale}px; padding: {5 * dpi_scale}px;")
 
         # CPU stats
         stats_cpu_layout.addWidget(self.cpu_label)

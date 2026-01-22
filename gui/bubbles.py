@@ -28,11 +28,15 @@ class Bubble:
         return QColor(r, g, b, 180)
 
 class BubbleOverlay(QWidget):
-    def __init__(self):
+    def __init__(self, screen, size, dpi_scale):
         super().__init__()
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.resize(800, 500)
+
+        width = int(size.width() * 0.25)
+        height = int(size.height() * 0.30)
+        self.resize(width, height)
+        
         self.move_to_bottom_right()
 
         # Processes
@@ -54,43 +58,43 @@ class BubbleOverlay(QWidget):
 
         # Stats button
         self.stats_button = QPushButton(" Stats ", self)
-        self.stats_button.setFixedSize(75, 30)
+        self.stats_button.setFixedSize(int(75*dpi_scale), int(30*dpi_scale))
         self.position_stats_button()         
         self.stats_button.clicked.connect(self.toggle_stats)
 
-        self.stats_button.setStyleSheet("""
-            QPushButton {
+        self.stats_button.setStyleSheet(f"""
+            QPushButton {{
                 background-color: rgba(255, 255, 255, 50);
-                padding: 1px;
+                padding: {int(1*dpi_scale)}px;
                 border: none;
-                border-radius: 5px;
+                border-radius: {int(5*dpi_scale)}px;
                 color: white;
-            }
-            QPushButton:hover {
+            }}
+            QPushButton:hover {{
                 background-color: rgba(255, 255, 255, 150);
                 color: black;
                 font-weight: bold;
-            }
+            }}
         """)
 
         # Minimize button
         self.minimize_button = QPushButton("-", self)
-        self.minimize_button.setFixedSize(30, 30)
+        self.minimize_button.setFixedSize(int(30*dpi_scale), int(30*dpi_scale))
         self.position_minimize_button()
-        self.minimize_button.setStyleSheet("""
-            QPushButton {
+        self.minimize_button.setStyleSheet(f"""
+            QPushButton {{
                 background-color: rgba(255, 255, 255, 50);
                 border: none;
-                font-size: 50px;
-                padding: 1px;
+                font-size: {int(50*dpi_scale)}px;
+                padding: {int(1*dpi_scale)}px;
                 color: white;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
+                border-radius: {int(5*dpi_scale)}px;
+            }}
+            QPushButton:hover {{
                 background-color: rgba(255, 255, 255, 150);
                 color: black;
                 font-weight: bold;
-            }
+            }}
         """)
         self.minimize_button.clicked.connect(self.showMinimized)
 
