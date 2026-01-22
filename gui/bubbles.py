@@ -7,18 +7,19 @@ import hashlib
 
 from cli.processes import process_stats
 
+
 class Bubble:
-    def __init__(self, name, cpu, x=None, y=None):
+    def __init__(self, dpi, height, name, cpu, x=None, y=None):
         self.name = name
         self.cpu = cpu
         self.x = x if x is not None else random.randint(50, 450)
         self.y = y if y is not None else random.randint(50, 450)
         self.dx = random.choice([-2, 2])
         self.dy = random.choice([-2, 2])
-        self.radius = min(max(10, self.cpu * 3), 220)          # scale size by CPU%
+        self.radius = min(max(10, self.cpu * 3), (height//2)-5)          # scale size by CPU%
         self.color = self.get_color_from_name(name)
         self.font = QFont("Arial")
-        self.font_size = 10
+        self.font_size = 10*dpi
 
     def get_color_from_name(self, name):
         hash_val = int(hashlib.md5(name.encode()).hexdigest(), 16)
@@ -28,10 +29,17 @@ class Bubble:
         return QColor(r, g, b, 180)
 
 class BubbleOverlay(QWidget):
-    def __init__(self, screen, size, dpi_scale):
+    def __init__(self, size, dpi_scale):
         super().__init__()
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
+
+        self.dpi = dpi_scale
+        BASE_W = 1920
+        BASE_H = 1080
+        screen = self.screen()
+        self.scale_w = screen.size().width() / BASE_W
+        self.scale_h = screen.size().height() / BASE_H
 
         width = int(size.width() * 0.25)
         height = int(size.height() * 0.30)
@@ -51,21 +59,20 @@ class BubbleOverlay(QWidget):
         # Animate bubbles
         self.anim_timer = QTimer(self)
         self.anim_timer.timeout.connect(self.animate)
-        self.anim_timer.start(16)       # 16ms (~60fps)
+        self.anim_timer.start(20)       # 16ms (~60fps) change with resolution
 
         # Stats Window
         self.stats_window = None
 
         # Stats button
-        self.stats_button = QPushButton(" Stats ", self)
-        self.stats_button.setFixedSize(int(75*dpi_scale), int(30*dpi_scale))
+        self.stats_button = QPushButton("Stats", self)
+        self.stats_button.setFixedSize(int(75*self.scale_w), int(30*self.scale_h))
         self.position_stats_button()         
         self.stats_button.clicked.connect(self.toggle_stats)
 
         self.stats_button.setStyleSheet(f"""
             QPushButton {{
                 background-color: rgba(255, 255, 255, 50);
-                padding: {int(1*dpi_scale)}px;
                 border: none;
                 border-radius: {int(5*dpi_scale)}px;
                 color: white;
@@ -79,14 +86,13 @@ class BubbleOverlay(QWidget):
 
         # Minimize button
         self.minimize_button = QPushButton("-", self)
-        self.minimize_button.setFixedSize(int(30*dpi_scale), int(30*dpi_scale))
+        self.minimize_button.setFixedSize(int(30*self.scale_w), int(30*self.scale_h))
         self.position_minimize_button()
         self.minimize_button.setStyleSheet(f"""
             QPushButton {{
                 background-color: rgba(255, 255, 255, 50);
                 border: none;
-                font-size: {int(50*dpi_scale)}px;
-                padding: {int(1*dpi_scale)}px;
+                font-size: {int(20*dpi_scale)}px;
                 color: white;
                 border-radius: {int(5*dpi_scale)}px;
             }}
@@ -106,8 +112,8 @@ class BubbleOverlay(QWidget):
 
     def move_to_bottom_right(self):
         screen = QApplication.primaryScreen().availableGeometry()
-        x = screen.right() - self.width() - 20
-        y = screen.bottom() - self.height() - 20
+        x = screen.right() - self.width() - int(10*self.scale_w)
+        y = screen.bottom() - self.height() - int(10*self.scale_h)
         self.move(x, y)
 
     def update_processes(self):
@@ -116,12 +122,12 @@ class BubbleOverlay(QWidget):
 
         # Update bubbles
         seen = set()
-        bubbles_now = [Bubble(p['name'], p['cpu_percent'])for p in procs if not (p['name'] in seen or seen.add(p['name']))][:5]      # top 5
+        bubbles_now = [Bubble(self.dpi , self.scale_h*210, p['name'], p['cpu_percent'])for p in procs if not (p['name'] in seen or seen.add(p['name']))][:5]      # top 5
         for b in bubbles_now:
             if b.name in current_names:
                 bubble = self.bubbles[b.name]
                 bubble.cpu = b.cpu
-                bubble.radius = min(max(10, b.cpu * 3), 220)
+                bubble.radius = min(max(int(10*self.scale_h), b.cpu * 3), int(150*self.scale_h))
             else:
                 self.bubbles[b.name] = b
         
@@ -173,9 +179,9 @@ class BubbleOverlay(QWidget):
             
             # Text font
             if len(text) < (bubble.radius* 2):
-                bubble.font_size = max(10, bubble.radius * 0.1)
+                bubble.font_size = max(10*self.dpi, bubble.radius * 0.1)
             else:
-                bubble.font_size = min(10, bubble.radius * 0.1)
+                bubble.font_size = min(10*self.dpi, bubble.radius * 0.1)
             bubble.font.setPointSizeF(bubble.font_size)
 
             x = bubble.x - text_width / 2
@@ -188,13 +194,13 @@ class BubbleOverlay(QWidget):
         self.stats_window = stats_window
 
     def position_stats_button(self):        # top right corner
-        padding = 10
-        margin = 35
+        padding = int(5*self.scale_w)
+        margin = int(30*self.scale_w)
         btn_width = self.stats_button.width()
         self.stats_button.move(self.width() - btn_width - padding - margin, padding)
 
     def position_minimize_button(self):     # top right corner
-        padding = 10
+        padding = int(5*self.scale_w)
         btn_width = self.minimize_button.width()
         self.minimize_button.move(self.width() - btn_width, padding)
 

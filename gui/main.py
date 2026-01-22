@@ -13,7 +13,7 @@ if __name__ == "__main__":
     dpi_scale = screen.logicalDotsPerInch() / 96            # 96 = baseline DPI
 
 
-    overlay = BubbleOverlay(screen, size, dpi_scale)
+    overlay = BubbleOverlay(size, dpi_scale)
     stats_window = StatsVisualizer(size, dpi_scale)
 
     overlay.setWindowTitle("Process Visualizer")
