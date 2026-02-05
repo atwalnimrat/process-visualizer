@@ -1,5 +1,8 @@
+joblib
+numpy
 plyer
 psutil
 PyQt5
 pyqtgraph
 rich
+scikit-learn
